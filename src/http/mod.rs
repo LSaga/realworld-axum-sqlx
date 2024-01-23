@@ -38,7 +38,7 @@ pub use error::{Error, ResultExt};
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 use tower_http::trace::TraceLayer;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::CorsLayer;
 /// The core type through which handler functions can access common API state.
 ///
 /// This can be accessed by adding a parameter `Extension<ApiContext>` to a handler function's
