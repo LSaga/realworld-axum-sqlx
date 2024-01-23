@@ -38,7 +38,7 @@ pub use error::{Error, ResultExt};
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 use tower_http::trace::TraceLayer;
-
+use tower_http::cors::{Any, CorsLayer};
 /// The core type through which handler functions can access common API state.
 ///
 /// This can be accessed by adding a parameter `Extension<ApiContext>` to a handler function's
@@ -68,6 +68,11 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     // It does look nicer than the mess of `move || {}` closures you have to do with Actix-web,
     // which, I suspect, largely has to do with how it manages its own worker threads instead of
     // letting Tokio do it.
+    //let cors = CorsLayer::new()
+    //    .allow_methods([Method::GET, Method::POST])
+    //    .allow_origin(Any)
+     //   .allow_headers([CONTENT_TYPE]);
+
     let app = api_router().layer(
         ServiceBuilder::new()
             // The other reason for using a single object is because `AddExtensionLayer::new()` is
@@ -79,7 +84,8 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
                 db,
             }))
             // Enables logging. Use `RUST_LOG=tower_http=debug`
-            .layer(TraceLayer::new_for_http()),
+            .layer(TraceLayer::new_for_http())
+            .layer(CorsLayer::permissive()),
     );
 
     // We use 8080 as our default HTTP server port, it's pretty easy to remember.

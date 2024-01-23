@@ -33,7 +33,7 @@ struct NewUser {
 
 #[derive(serde::Deserialize)]
 struct LoginUser {
-    email: String,
+    username: String,
     password: String,
 }
 
@@ -103,9 +103,9 @@ async fn login_user(
     let user = sqlx::query!(
         r#"
             select user_id, email, username, bio, image, password_hash 
-            from "user" where email = $1
+            from "user" where username = $1
         "#,
-        req.user.email,
+        req.user.username,
     )
     .fetch_optional(&ctx.db)
     .await?
